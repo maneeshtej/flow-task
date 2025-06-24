@@ -90,11 +90,6 @@ const styles = StyleSheet.create({
     paddingRight: 0,
     paddingLeft: 0,
   },
-  heading: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#4c1d95",
-  },
   input: {
     paddingVertical: 8,
     fontSize: 16,

@@ -1,6 +1,6 @@
 import { View, Text, ViewStyle } from "react-native";
 import React from "react";
-import { GlobalStyles } from "../styles/globals";
+import { AccentStyles, GlobalStyles } from "../styles/globals";
 
 type SpacerProps = {
   height?: number;
@@ -32,7 +32,12 @@ export const Divider = () => {
 
 export const Heading = ({ text, accent }: TextProps) => {
   return (
-    <Text style={[GlobalStyles.heading, { color: accent ? "#8b5cf6" : "" }]}>
+    <Text
+      style={[
+        GlobalStyles.heading,
+        { color: accent ? AccentStyles.accentColor : "" },
+      ]}
+    >
       {text}
     </Text>
   );

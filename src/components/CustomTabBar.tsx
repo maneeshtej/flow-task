@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { usePathname, useRouter } from "expo-router";
+import { AccentStyles } from "../styles/globals";
 
 const tabs = [
   { name: "Inbox", href: "/inbox", icon: "mail-outline" },
@@ -101,7 +102,11 @@ const CustomTabBar = () => {
               <Animated.View
                 style={[styles.tab, { opacity: fadeMap[tab.name] }]}
               >
-                <Ionicons name={tab.icon as any} size={24} color="#8b5cf6" />
+                <Ionicons
+                  name={tab.icon as any}
+                  size={24}
+                  color={AccentStyles.accentColor}
+                />
                 <Text style={styles.label}>{tab.name}</Text>
               </Animated.View>
             </TouchableOpacity>
@@ -121,7 +126,7 @@ const styles = StyleSheet.create({
     left: 16,
     right: 16,
     borderRadius: 30,
-    backgroundColor: "#fff",
+    backgroundColor: AccentStyles.backgroundColor,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 4 },
@@ -143,13 +148,13 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 12,
-    color: "#8b5cf6",
+    color: AccentStyles.accentColor,
     marginTop: 4,
   },
   floatingDisc: {
     position: "absolute",
     top: "50%",
-    backgroundColor: "#8b5cf6",
+    backgroundColor: AccentStyles.accentColor,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 10,

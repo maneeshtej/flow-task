@@ -26,7 +26,8 @@
     "react-native-screens": "~4.11.1",
     "zustand": "^5.0.5",
     "expo-blur": "~14.1.5",
-    "expo-dev-client": "~5.2.1"
+    "expo-dev-client": "~5.2.1",
+    "@react-native-picker/picker": "2.11.0"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
