@@ -28,6 +28,7 @@ const CustomTabBar = () => {
   const tabRefs = useRef<{ [key: string]: View | null }>({});
 
   const discX = useRef(new Animated.Value(0)).current;
+  const discScale = useRef(new Animated.Value(0)).current;
   const [discIcon, setDiscIcon] = useState(tabs[0].icon);
   const [curLabel, setCurLabel] = useState(tabs[0].name);
   const fadeMap = useRef(
@@ -36,8 +37,13 @@ const CustomTabBar = () => {
 
   useEffect(() => {
     const activeTab = tabs.find((tab) => pathname.includes(tab.href));
-    if (!activeTab || !tabRefs.current[activeTab.name] || !containerRef.current)
+    if (
+      !activeTab ||
+      !tabRefs.current[activeTab.name] ||
+      !containerRef.current
+    ) {
       return;
+    }
 
     tabRefs.current[activeTab.name]?.measureLayout(
       containerRef.current,
@@ -64,6 +70,11 @@ const CustomTabBar = () => {
       () => console.error("measureLayout failed")
     );
   }, [pathname]);
+
+  const scale = discScale.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 1.3],
+  });
 
   return (
     <View style={styles.wrapper}>

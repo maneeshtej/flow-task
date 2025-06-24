@@ -12,6 +12,7 @@ import { Align, Spacer } from "../../../src/components/Useful";
 import { CustomTextButton } from "../../../src/components/CustomButton";
 import { Task } from "../../../src/models/task";
 import DropdownPicker from "../../../src/components/Dropdowns/DropdownPicker";
+import SmartList from "../../../src/components/List/SmartList";
 
 const Process = () => {
   const { tasks, updateTask } = useTaskStore();
@@ -23,11 +24,11 @@ const Process = () => {
   const [taskProjects, setTaskProjects] = useState<Record<string, string>>({});
 
   const contextOptions = [
+    { label: "Context", value: "none" },
     { label: "@home", value: "home" },
     { label: "@work", value: "work" },
     { label: "@computer", value: "computer" },
     { label: "@errands", value: "errands" },
-    { label: "Context", value: "none" },
   ];
 
   const projectOptions = [
@@ -61,7 +62,7 @@ const Process = () => {
 
   inboxTasks.forEach((task) => {
     if (!slideAnimationsRef.current[task.id]) {
-      slideAnimationsRef.current[task.id] = new Animated.Value(150); // only once
+      slideAnimationsRef.current[task.id] = new Animated.Value(150);
     }
   });
 
@@ -87,62 +88,55 @@ const Process = () => {
         <Text style={styles.emptyText}>You're all caught up 🎉</Text>
       )}
 
-      {inboxTasks.map((task) => (
-        <View key={task.id} style={styles.card}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Text style={styles.title}>{task.title}</Text>
+      <SmartList
+        data={inboxTasks}
+        getKey={(task) => task.id}
+        onProcessItem={handleProcessTask}
+        renderItem={(task, _internalAnim, onProcess) => {
+          const slideAnim = slideAnimationsRef.current[task.id];
 
-            <Animated.View
-              style={{
-                transform: [
-                  { translateX: slideAnimationsRef.current[task.id] },
-                ],
-              }}
-            >
-              <CustomTextButton
-                title="Process Task"
-                onPress={() => handleProcessTask(task)}
-              />
-            </Animated.View>
-          </View>
-          {task.description && (
-            <Text style={styles.description}>{task.description}</Text>
-          )}
+          return (
+            <View style={styles.card}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={styles.title}>{task.title}</Text>
 
-          <Spacer height={16} />
+                <Animated.View
+                  style={{
+                    transform: [{ translateX: slideAnim }],
+                  }}
+                >
+                  <CustomTextButton title="Process Task" onPress={onProcess} />
+                </Animated.View>
+              </View>
 
-          <View
-            style={{
-              flexDirection: "row",
-              // justifyContent: "space-between",
-              gap: 16,
-              paddingRight: 16,
-            }}
-          >
-            <DropdownPicker
-              label="Context"
-              selectedValue={taskContexts[task.id] || "none"}
-              onValueChange={(value) => handleContextChange(task.id, value)}
-              options={contextOptions}
-            />
+              <Spacer height={16} />
 
-            <DropdownPicker
-              label="Project"
-              selectedValue={taskProjects[task.id] || "none"}
-              onValueChange={(value) => handleProjectChange(task.id, value)}
-              options={projectOptions}
-            />
-          </View>
+              <View style={{ flexDirection: "row", gap: 16 }}>
+                <DropdownPicker
+                  label="Context"
+                  selectedValue={taskContexts[task.id] || "none"}
+                  onValueChange={(value) => handleContextChange(task.id, value)}
+                  options={contextOptions}
+                />
+                <DropdownPicker
+                  label="Project"
+                  selectedValue={taskProjects[task.id] || "none"}
+                  onValueChange={(value) => handleProjectChange(task.id, value)}
+                  options={projectOptions}
+                />
+              </View>
 
-          <Spacer height={16} />
-        </View>
-      ))}
+              <Spacer height={16} />
+            </View>
+          );
+        }}
+      />
 
       <Spacer height={100} />
     </AnimatedHeaderContainer>
