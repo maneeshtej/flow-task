@@ -12,11 +12,16 @@
   "dependencies": {
     "@expo/vector-icons": "^14.1.0",
     "@react-native-async-storage/async-storage": "^2.2.0",
+    "@react-native-picker/picker": "2.11.0",
     "@react-navigation/bottom-tabs": "^7.4.1",
     "@react-navigation/native": "^7.1.14",
     "expo": "~53.0.12",
+    "expo-blur": "~14.1.5",
+    "expo-dev-client": "~5.2.1",
     "expo-router": "~5.1.0",
     "expo-status-bar": "~2.2.3",
+    "lottie-ios": "^4.5.1",
+    "lottie-react-native": "7.2.2",
     "nanoid": "^5.1.5",
     "react": "19.0.0",
     "react-native": "0.79.4",
@@ -24,10 +29,7 @@
     "react-native-reanimated": "~3.17.4",
     "react-native-safe-area-context": "5.4.0",
     "react-native-screens": "~4.11.1",
-    "zustand": "^5.0.5",
-    "expo-blur": "~14.1.5",
-    "expo-dev-client": "~5.2.1",
-    "@react-native-picker/picker": "2.11.0"
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

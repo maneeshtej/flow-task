@@ -9,6 +9,7 @@ interface TaskStore {
   addTask: (title: string, description?: string) => void;
   updateTask: (id: string, data: Partial<Task>) => void;
   deleteTask: (id: string) => void;
+  clearTasks: () => void;
 }
 
 export const useTaskStore = create<TaskStore>()(
@@ -34,6 +35,9 @@ export const useTaskStore = create<TaskStore>()(
       },
       deleteTask: (id) => {
         set({ tasks: get().tasks.filter((task) => task.id !== id) });
+      },
+      clearTasks: () => {
+        set({ tasks: [] });
       },
     }),
     {

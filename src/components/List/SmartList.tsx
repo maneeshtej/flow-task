@@ -34,7 +34,7 @@ export default function SmartList<T>({
       duration: 200,
       useNativeDriver: false,
     }).start(() => {
-      onProcessItem(item); // Actually remove the task from external state
+      onProcessItem(item);
     });
   };
 
@@ -51,7 +51,7 @@ export default function SmartList<T>({
 
         const slideX = anim.interpolate({
           inputRange: [0, 1],
-          outputRange: [0, 400], // slide right
+          outputRange: [0, 400],
         });
 
         const height = anim.interpolate({
@@ -71,7 +71,6 @@ export default function SmartList<T>({
               height,
               opacity,
               transform: [{ translateX: slideX }],
-              overflow: "hidden",
             }}
           >
             {renderItem(item, anim, () => handleProcess(item))}

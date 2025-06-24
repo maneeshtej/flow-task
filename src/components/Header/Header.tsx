@@ -3,6 +3,7 @@ import React, { useRef } from "react";
 import { GlobalStyles } from "../../styles/globals";
 import { Spacer } from "../Useful";
 import { Ionicons } from "@expo/vector-icons";
+import { useTaskStore } from "../../store/taskStore";
 
 type HeaderProp = {
   title: string;
@@ -15,7 +16,7 @@ const MIN_HEADER_HEIGHT = 60;
 const HeaderBar = ({ title, scrollY }: HeaderProp) => {
   const fontSize = scrollY.interpolate({
     inputRange: [0, MAX_HEADER_HEIGHT - MIN_HEADER_HEIGHT],
-    outputRange: [50, 30], // from 28px to 18px
+    outputRange: [50, 30],
     extrapolate: "clamp",
   });
   const movex = scrollY.interpolate({
@@ -23,6 +24,7 @@ const HeaderBar = ({ title, scrollY }: HeaderProp) => {
     outputRange: [0, 70],
     extrapolate: "clamp",
   });
+  const { clearTasks } = useTaskStore();
 
   return (
     <View style={styles.wrapper}>
@@ -33,7 +35,7 @@ const HeaderBar = ({ title, scrollY }: HeaderProp) => {
             GlobalStyles.title,
             {
               fontSize,
-              lineHeight: fontSize, // helps vertical alignment
+              lineHeight: fontSize,
             },
           ]}
         >
@@ -41,12 +43,16 @@ const HeaderBar = ({ title, scrollY }: HeaderProp) => {
         </Animated.Text>
         <Animated.View
           style={{
-            justifyContent: "center", // vertical center
+            justifyContent: "center",
             alignItems: "center",
             transform: [{ translateX: movex }],
           }}
         >
-          <Ionicons name="person-circle-outline" size={35} />
+          <Ionicons
+            name="person-circle-outline"
+            size={35}
+            onPress={clearTasks}
+          />
         </Animated.View>
       </View>
       <Spacer />

@@ -25,7 +25,7 @@ const CustomTabBar = () => {
   const DISC_SIZE = width * 0.12 + 15;
 
   const containerRef = useRef<View>(null);
-  const tabRefs = useRef<{ [key: string]: View | null }>({});
+  const tabRefs = useRef<Record<string, View | null>>({});
 
   const discX = useRef(new Animated.Value(0)).current;
   const discScale = useRef(new Animated.Value(0)).current;

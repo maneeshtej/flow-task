@@ -5,6 +5,7 @@ import { Heading, Spacer } from "../../../src/components/Useful";
 import AddTaskInput from "../../../src/components/AddTaskInput";
 import AnimatedHeaderContainer from "../../../src/components/Header/AnimatedContainer";
 import DropdownPicker from "../../../src/components/Dropdowns/DropdownPicker";
+import LottieView from "lottie-react-native";
 
 export default function InboxScreen() {
   const { tasks, addTask } = useTaskStore();
@@ -29,7 +30,20 @@ export default function InboxScreen() {
           </View>
         ))
       ) : (
-        <Text style={styles.emptyText}>No inbox tasks yet.</Text>
+        <View
+          style={{
+            height: 200,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <LottieView
+            source={require("../../../assets/lottie/mail.json")}
+            autoPlay={true}
+            loop={true}
+            style={{ height: 50, width: 50 }}
+          />
+        </View>
       )}
     </AnimatedHeaderContainer>
   );
