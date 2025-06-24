@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Animated } from "react-native";
 import React, { useRef } from "react";
-import { GlobalStyles } from "../styles/globals";
-import { Spacer } from "./Useful";
+import { GlobalStyles } from "../../styles/globals";
+import { Spacer } from "../Useful";
 import { Ionicons } from "@expo/vector-icons";
 
 type HeaderProp = {

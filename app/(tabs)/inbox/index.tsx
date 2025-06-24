@@ -1,65 +1,40 @@
-import {
-  View,
-  ScrollView,
-  Text,
-  StyleSheet,
-  FlatList,
-  Animated,
-} from "react-native";
-import { useTaskStore } from "../../../src/store/taskStore";
-import { Divider, Heading, Spacer } from "../../../src/components/Useful";
-import AddTaskInput from "../../../src/components/AddTaskInput";
-import HeaderBar from "../../../src/components/Header";
+import { View, Text, StyleSheet, Animated } from "react-native";
 import { useRef } from "react";
+import { useTaskStore } from "../../../src/store/taskStore";
+import { Heading, Spacer } from "../../../src/components/Useful";
+import AddTaskInput from "../../../src/components/AddTaskInput";
+import AnimatedHeaderContainer from "../../../src/components/Header/AnimatedContainer";
 
 export default function InboxScreen() {
   const { tasks, addTask } = useTaskStore();
-
   const inboxTasks = tasks.filter((t) => t.status === "inbox");
+
   const scrollY = useRef(new Animated.Value(0)).current;
 
   return (
-    <View style={{ flex: 1 }}>
-      <HeaderBar title="Inbox" scrollY={scrollY} />
-      <Animated.ScrollView
-        contentContainerStyle={styles.scrollContent}
-        keyboardShouldPersistTaps="handled"
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: false } // Set to false since we interpolate layout values
-        )}
-        scrollEventThrottle={16}
-      >
-        <Spacer />
-        <AddTaskInput onAddTask={(title, desc) => addTask(title, desc)} />
-        <Spacer height={40} />
-        <Heading text="Tasks" accent={true} />
-        <Spacer />
+    <AnimatedHeaderContainer title="Inbox" scrollY={scrollY}>
+      <AddTaskInput onAddTask={(title, desc) => addTask(title, desc)} />
+      <Spacer height={40} />
+      <Heading text="Tasks" accent />
+      <Spacer />
 
-        {inboxTasks.length > 0 ? (
-          inboxTasks.map((item) => (
-            <View key={item.id} style={styles.card}>
-              <Text style={styles.title}>{item.title}</Text>
-              {item.description && (
-                <Text style={styles.description}>{item.description}</Text>
-              )}
-            </View>
-          ))
-        ) : (
-          <Text style={styles.emptyText}>No inbox tasks yet.</Text>
-        )}
-
-        <Spacer height={100} />
-      </Animated.ScrollView>
-    </View>
+      {inboxTasks.length > 0 ? (
+        inboxTasks.map((item) => (
+          <View key={item.id} style={styles.card}>
+            <Text style={styles.title}>{item.title}</Text>
+            {item.description && (
+              <Text style={styles.description}>{item.description}</Text>
+            )}
+          </View>
+        ))
+      ) : (
+        <Text style={styles.emptyText}>No inbox tasks yet.</Text>
+      )}
+    </AnimatedHeaderContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 40,
-  },
   card: {
     backgroundColor: "#fff",
     padding: 16,
