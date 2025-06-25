@@ -15,15 +15,19 @@ import DropdownPicker from "../../../src/components/Dropdowns/DropdownPicker";
 import SmartList from "../../../src/components/List/SmartList";
 import { contextOptions, projectOptions } from "../../../src/constants/options";
 import LottieView from "lottie-react-native";
+import { useTheme } from "../../../src/context/ThemeContext";
 
 const Process = () => {
+  const { theme } = useTheme();
   const { tasks, updateTask } = useTaskStore();
   const scrollY = useRef(new Animated.Value(0)).current;
+  const animationRef = useRef<LottieView>(null);
 
   const inboxTasks = tasks.filter((task) => task.status === "inbox");
 
   const [taskContexts, setTaskContexts] = useState<Record<string, string>>({});
   const [taskProjects, setTaskProjects] = useState<Record<string, string>>({});
+  const [allCompleted, setAllCompleted] = useState(false);
 
   const handleContextChange = (taskId: string, value: string) => {
     setTaskContexts((prev) => ({ ...prev, [taskId]: value }));
@@ -52,6 +56,52 @@ const Process = () => {
     }
   });
 
+  const AllCompletedComponent = () => {
+    return (
+      <View
+        style={{
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: 400,
+        }}
+      >
+        <LottieView
+          source={require("../../../assets/lottie/confetti.json")}
+          autoPlay={true}
+          loop={true}
+          style={{ height: 200, width: 200 }}
+        />
+        <Text style={[styles.emptyText, { color: theme.textColor }]}>
+          You're all caught up
+        </Text>
+      </View>
+    );
+  };
+
+  const EmptyComponent = () => {
+    return (
+      <View
+        style={{
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: 50,
+        }}
+      >
+        <LottieView
+          source={require("../../../assets/lottie/tumble-weed.json")}
+          loop={true}
+          style={{ height: 200, width: 200 }}
+          ref={animationRef}
+        />
+        <Text style={[styles.emptyText, { color: theme.textColor }]}>
+          Go to inbox page to add tasks
+        </Text>
+      </View>
+    );
+  };
+
   useEffect(() => {
     inboxTasks.forEach((task) => {
       const context = taskContexts[task.id];
@@ -68,26 +118,27 @@ const Process = () => {
     });
   }, [taskContexts, taskProjects]);
 
+  useEffect(() => {
+    if (tasks.length > 0 && inboxTasks.length === 0) {
+      setAllCompleted(true);
+    }
+  }, [inboxTasks.length]);
+
+  useEffect(() => {
+    if (inboxTasks.length == 0) {
+      setAllCompleted(false);
+    }
+
+    const timeout = setTimeout(() => {
+      animationRef.current?.play();
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, []);
+
   return (
     <AnimatedHeaderContainer scrollY={scrollY} title="Process">
-      {inboxTasks.length === 0 && (
-        <View
-          style={{
-            flexDirection: "column",
-            alignItems: "center",
-            justifyContent: "center",
-            height: 400,
-          }}
-        >
-          <LottieView
-            source={require("../../../assets/lottie/confetti.json")}
-            autoPlay={true}
-            loop={true}
-            style={{ height: 200, width: 200 }}
-          />
-          <Text style={styles.emptyText}>You're all caught up</Text>
-        </View>
-      )}
+      {inboxTasks.length === 0 &&
+        (allCompleted ? <AllCompletedComponent /> : <EmptyComponent />)}
 
       <SmartList
         data={inboxTasks}
@@ -97,7 +148,9 @@ const Process = () => {
           const slideAnim = slideAnimationsRef.current[task.id];
 
           return (
-            <View style={styles.card}>
+            <View
+              style={[styles.card, { backgroundColor: theme.backgroundColor }]}
+            >
               <View
                 style={{
                   flexDirection: "row",
@@ -105,7 +158,9 @@ const Process = () => {
                   alignItems: "center",
                 }}
               >
-                <Text style={styles.title}>{task.title}</Text>
+                <Text style={[styles.title, { color: theme.textColor }]}>
+                  {task.title}
+                </Text>
 
                 <Animated.View
                   style={{

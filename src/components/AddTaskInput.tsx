@@ -5,12 +5,14 @@ import { View, Text, TextInput, StyleSheet, Animated } from "react-native";
 import { CustomButton, CustomTextButton } from "./CustomButton";
 import { Ionicons } from "@expo/vector-icons";
 import { Divider, Spacer, Align, Heading } from "./Useful";
+import { useTheme } from "../context/ThemeContext";
 
 type Props = {
   onAddTask: (title: string, desc?: string) => void;
 };
 
 const AddTaskInput = ({ onAddTask }: Props) => {
+  const { theme } = useTheme();
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const opacity = useRef(new Animated.Value(0)).current;
@@ -66,7 +68,7 @@ const AddTaskInput = ({ onAddTask }: Props) => {
           value={title}
           onChangeText={setTitle}
           placeholderTextColor="#999"
-          style={styles.input}
+          style={[styles.input, { color: theme.textColor }]}
         />
         <Divider />
         <TextInput
@@ -75,7 +77,7 @@ const AddTaskInput = ({ onAddTask }: Props) => {
           onChangeText={setDesc}
           placeholderTextColor="#999"
           multiline
-          style={[styles.input, styles.desc]}
+          style={[styles.input, styles.desc, { color: theme.textColor }]}
         />
         <Divider />
       </View>

@@ -1,7 +1,7 @@
 import { View, Text, Button, StyleSheet, TouchableOpacity } from "react-native";
 import React from "react";
 import { Spacer } from "./Useful";
-import { AccentStyles } from "../styles/globals";
+import { useTheme } from "../context/ThemeContext";
 type ButtonProps = {
   title: string;
   onPress: () => any;
@@ -9,9 +9,10 @@ type ButtonProps = {
 };
 
 export const CustomButton = ({ title, onPress, leading }: ButtonProps) => {
+  const { theme } = useTheme();
   return (
     <TouchableOpacity onPress={onPress}>
-      <View style={styles.button}>
+      <View style={[styles.button, { backgroundColor: theme.accentColor }]}>
         {leading}
         <Spacer height={0} width={10} />
         <Text style={{ color: "white", fontSize: 15 }}>{title}</Text>
@@ -21,6 +22,7 @@ export const CustomButton = ({ title, onPress, leading }: ButtonProps) => {
 };
 
 export const CustomTextButton = ({ title, onPress, leading }: ButtonProps) => {
+  const { theme } = useTheme();
   return (
     <TouchableOpacity onPress={onPress}>
       <View
@@ -28,7 +30,7 @@ export const CustomTextButton = ({ title, onPress, leading }: ButtonProps) => {
       >
         {leading}
         <Spacer height={0} width={5} />
-        <Text style={{ color: AccentStyles.accentColor }}>{title}</Text>
+        <Text style={{ color: theme.accentColor }}>{title}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -37,7 +39,6 @@ export const CustomTextButton = ({ title, onPress, leading }: ButtonProps) => {
 const styles = StyleSheet.create({
   button: {
     flexDirection: "row",
-    backgroundColor: AccentStyles.accentColor,
     alignSelf: "flex-start",
     paddingVertical: 10,
     paddingHorizontal: 15,

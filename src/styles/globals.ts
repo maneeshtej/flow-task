@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 
 export const GlobalStyles = StyleSheet.create({
   title: {
-    fontSize: 50,
+    fontSize: 40,
     fontWeight: "500",
     padding: 0,
     margin: 0,
@@ -48,8 +48,25 @@ export const GlobalStyles = StyleSheet.create({
   },
 });
 
-export const AccentStyles = {
+// src/constants/theme.ts
+
+export interface Theme {
+  mode: "light" | "dark";
+  backgroundColor: string;
+  textColor: string;
+  accentColor: string;
+}
+
+// src/styles/globals.ts
+
+export const lightThemeBase = {
+  mode: "light" as const,
   backgroundColor: "white",
+  textColor: "black",
+};
+
+export const darkThemeBase = {
+  mode: "dark" as const,
+  backgroundColor: "black",
   textColor: "white",
-  accentColor: "#8b5cf6",
 };

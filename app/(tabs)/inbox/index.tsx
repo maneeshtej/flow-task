@@ -4,14 +4,15 @@ import { useTaskStore } from "../../../src/store/taskStore";
 import { Heading, Spacer } from "../../../src/components/Useful";
 import AddTaskInput from "../../../src/components/AddTaskInput";
 import AnimatedHeaderContainer from "../../../src/components/Header/AnimatedContainer";
-import DropdownPicker from "../../../src/components/Dropdowns/DropdownPicker";
 import LottieView from "lottie-react-native";
+import { useTheme } from "../../../src/context/ThemeContext";
 
 export default function InboxScreen() {
   const { tasks, addTask } = useTaskStore();
   const inboxTasks = tasks.filter((t) => t.status === "inbox");
 
   const scrollY = useRef(new Animated.Value(0)).current;
+  const { theme } = useTheme();
 
   return (
     <AnimatedHeaderContainer title="Inbox" scrollY={scrollY}>
@@ -22,10 +23,17 @@ export default function InboxScreen() {
 
       {inboxTasks.length > 0 ? (
         inboxTasks.map((item) => (
-          <View key={item.id} style={styles.card}>
-            <Text style={styles.title}>{item.title}</Text>
+          <View
+            key={item.id}
+            style={[styles.card, { backgroundColor: theme.backgroundColor }]}
+          >
+            <Text style={[styles.title, { color: theme.textColor }]}>
+              {item.title}
+            </Text>
             {item.description && (
-              <Text style={styles.description}>{item.description}</Text>
+              <Text style={[styles.description, { color: theme.textColor }]}>
+                {item.description}
+              </Text>
             )}
           </View>
         ))
@@ -41,8 +49,11 @@ export default function InboxScreen() {
             source={require("../../../assets/lottie/mail.json")}
             autoPlay={true}
             loop={true}
-            style={{ height: 50, width: 50 }}
+            style={{ height: 100, width: 100 }}
           />
+          <Text style={[styles.emptyText, { color: theme.textColor }]}>
+            Add tasks to get started
+          </Text>
         </View>
       )}
     </AnimatedHeaderContainer>
@@ -75,7 +86,6 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     textAlign: "center",
-    marginTop: 40,
     color: "#999",
     fontStyle: "italic",
   },

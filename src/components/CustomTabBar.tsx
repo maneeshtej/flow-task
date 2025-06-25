@@ -9,19 +9,21 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { usePathname, useRouter } from "expo-router";
-import { AccentStyles } from "../styles/globals";
+import { useTheme } from "../context/ThemeContext";
 
 const tabs = [
   { name: "Inbox", href: "/inbox", icon: "mail-outline" },
   { name: "Process", href: "/process", icon: "funnel-outline" },
   { name: "Next", href: "/next-actions", icon: "checkmark-done-outline" },
-  { name: "Projects", href: "/projects", icon: "briefcase-outline" },
+  { name: "More", href: "/more", icon: "menu" },
 ];
 
 const CustomTabBar = () => {
+  const { theme } = useTheme();
   const pathname = usePathname();
   const router = useRouter();
   const { width } = useWindowDimensions();
+
   const DISC_SIZE = width * 0.12 + 15;
 
   const containerRef = useRef<View>(null);
@@ -77,7 +79,7 @@ const CustomTabBar = () => {
   });
 
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, { backgroundColor: theme.backgroundColor }]}>
       {/* Floating Disc */}
       <Animated.View
         style={[
@@ -88,6 +90,7 @@ const CustomTabBar = () => {
             width: DISC_SIZE,
             height: DISC_SIZE,
             borderRadius: 70,
+            backgroundColor: theme.accentColor,
           },
         ]}
       >
@@ -116,9 +119,11 @@ const CustomTabBar = () => {
                 <Ionicons
                   name={tab.icon as any}
                   size={24}
-                  color={AccentStyles.accentColor}
+                  color={theme.textColor}
                 />
-                <Text style={styles.label}>{tab.name}</Text>
+                <Text style={[styles.label, { color: theme.textColor }]}>
+                  {tab.name}
+                </Text>
               </Animated.View>
             </TouchableOpacity>
           );
@@ -137,7 +142,7 @@ const styles = StyleSheet.create({
     left: 16,
     right: 16,
     borderRadius: 30,
-    backgroundColor: AccentStyles.backgroundColor,
+    // backgroundColor: theme.backgroundColor,
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 4 },
@@ -159,13 +164,13 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 12,
-    color: AccentStyles.accentColor,
+    // color: theme.textColor,
     marginTop: 4,
   },
   floatingDisc: {
     position: "absolute",
     top: "50%",
-    backgroundColor: AccentStyles.accentColor,
+    // backgroundColor: theme.accentColor,
     justifyContent: "center",
     alignItems: "center",
     zIndex: 10,

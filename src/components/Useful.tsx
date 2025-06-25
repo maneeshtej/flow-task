@@ -1,6 +1,7 @@
 import { View, Text, ViewStyle } from "react-native";
 import React from "react";
-import { AccentStyles, GlobalStyles } from "../styles/globals";
+import { GlobalStyles } from "../styles/globals";
+import { useTheme } from "../context/ThemeContext";
 
 type SpacerProps = {
   height?: number;
@@ -21,25 +22,36 @@ type TextProps = {
 };
 
 export const Spacer = ({ height = 20, width = 0 }: SpacerProps) => {
-  return <View style={{ height, width }}></View>;
+  return <View style={{ height, width }} />;
 };
 
 export const Divider = () => {
+  const { theme } = useTheme();
   return (
-    <View style={{ borderBottomColor: "black", borderBottomWidth: 0.5 }}></View>
+    <View
+      style={{ borderBottomColor: theme.textColor, borderBottomWidth: 0.5 }}
+    />
   );
 };
 
 export const Heading = ({ text, accent }: TextProps) => {
+  const { theme } = useTheme();
   return (
     <Text
       style={[
         GlobalStyles.heading,
-        { color: accent ? AccentStyles.accentColor : "" },
+        { color: accent ? theme.accentColor : theme.textColor },
       ]}
     >
       {text}
     </Text>
+  );
+};
+
+export const Title = ({ text }: TextProps) => {
+  const { theme } = useTheme();
+  return (
+    <Text style={[GlobalStyles.title, { color: theme.textColor }]}>{text}</Text>
   );
 };
 
