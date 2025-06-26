@@ -7,6 +7,7 @@ import AnimatedHeaderContainer from "../../../src/components/Header/AnimatedCont
 import LottieView from "lottie-react-native";
 import { useTheme } from "../../../src/context/ThemeContext";
 import { getGlobalStyles } from "../../../src/styles/GlobalStyles";
+import { useProjectStore } from "../../../src/store/projectStore";
 
 export default function InboxScreen() {
   const { tasks, addTask } = useTaskStore();

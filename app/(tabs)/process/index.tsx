@@ -13,15 +13,17 @@ import { CustomTextButton } from "../../../src/components/CustomButton";
 import { Task } from "../../../src/models/task";
 import DropdownPicker from "../../../src/components/Dropdowns/DropdownPicker";
 import SmartList from "../../../src/components/List/SmartList";
-import { contextOptions, projectOptions } from "../../../src/constants/options";
+import { contextOptions } from "../../../src/constants/options";
 import LottieView from "lottie-react-native";
 import { useTheme } from "../../../src/context/ThemeContext";
 import { getGlobalStyles } from "../../../src/styles/GlobalStyles";
+import { useProjectStore } from "../../../src/store/projectStore";
 
 const Process = () => {
   const { theme } = useTheme();
   const globalStyles = getGlobalStyles(theme);
   const { tasks, updateTask } = useTaskStore();
+  const { projects } = useProjectStore();
   const scrollY = useRef(new Animated.Value(0)).current;
   const animationRef = useRef<LottieView>(null);
 
@@ -57,6 +59,13 @@ const Process = () => {
       slideAnimationsRef.current[task.id] = new Animated.Value(150);
     }
   });
+
+  const projectOptions = useMemo(() => {
+    return [
+      { label: "None", value: "none" },
+      ...projects.map((p) => ({ label: p.name, value: p.id })),
+    ];
+  }, [projects]);
 
   const AllCompletedComponent = () => {
     return (

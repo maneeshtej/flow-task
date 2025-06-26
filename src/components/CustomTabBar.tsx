@@ -106,8 +106,6 @@ const CustomTabBar = () => {
           ))}
         </View>
       </View>
-
-      {/* More Button */}
     </View>
   );
 };
@@ -121,14 +119,13 @@ const styles = StyleSheet.create({
     left: 16,
     right: 16,
     flexDirection: "row",
-    height: 90,
+    height: 80,
     zIndex: 100,
     justifyContent: "space-between",
-    gap: 16,
   },
   innerWrapper: {
     flex: 7,
-    borderRadius: 30,
+    borderRadius: 100,
     justifyContent: "center",
     backgroundColor: "rgba(0, 0, 0, 0.5)",
     opacity: 0.8,

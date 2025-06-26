@@ -3,16 +3,18 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import AnimatedHeaderContainer from "../../../src/components/Header/AnimatedContainer";
 import { useTaskStore } from "../../../src/store/taskStore";
 import CustomDropdown from "../../../src/components/Dropdowns/DropdownPicker";
-import { contextOptions, projectOptions } from "../../../src/constants/options";
+import { contextOptions } from "../../../src/constants/options";
 import SmartList from "../../../src/components/List/SmartList";
 import { GlobalStyles } from "../../../src/styles/globals";
 import { Spacer } from "../../../src/components/Useful";
 import LottieView from "lottie-react-native";
 import { useTheme } from "../../../src/context/ThemeContext";
 import { getGlobalStyles } from "../../../src/styles/GlobalStyles";
+import { useProjectStore } from "../../../src/store/projectStore";
 
 const NextActions = () => {
   const { theme } = useTheme();
+  const { projects } = useProjectStore();
   const globalStyles = getGlobalStyles(theme);
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -23,6 +25,7 @@ const NextActions = () => {
   const animOpacity = useRef(new Animated.Value(0)).current;
   const wasJustCompleted = useRef(false);
   const animationRef = useRef<LottieView>(null);
+  const [showCompleted, setShowCompleted] = useState(false);
 
   const nextTasks = useMemo(() => {
     return tasks.filter((task) => {
@@ -36,6 +39,18 @@ const NextActions = () => {
     });
   }, [tasks, selectedContext, selectedProject]);
 
+  const doneTasks = useMemo(() => {
+    return tasks.filter((task) => {
+      const isDone = task.status === "done";
+      const matchContext =
+        selectedContext === "all" || selectedContext === task.context;
+      const matchProject =
+        selectedProject === "all" || selectedProject === task.projectId;
+
+      return isDone && matchContext && matchProject;
+    });
+  }, [tasks, selectedContext, selectedProject]);
+
   const hasAnyNextTasks = useMemo(() => {
     return tasks.some((task) => task.status === "next");
   }, [tasks]);
@@ -44,6 +59,16 @@ const NextActions = () => {
     updateTask(taskId, { status: "done" });
     wasJustCompleted.current = true;
   };
+
+  const projectOptions = useMemo(() => {
+    return [
+      { label: "All Projects", value: "all" },
+      ...projects.map((proj) => ({
+        label: proj.name,
+        value: proj.id,
+      })),
+    ];
+  }, [projects]);
 
   const AllCompletedComponent = () => {
     return (
@@ -132,31 +157,37 @@ const NextActions = () => {
 
   return (
     <AnimatedHeaderContainer title="Next" scrollY={scrollY}>
-      {hasAnyNextTasks && (
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            paddingRight: 16,
-          }}
-        >
-          <CustomDropdown
-            label="Project"
-            selectedValue={selectedProject}
-            onValueChange={(val) => setSelectedProject(val)}
-            options={projectOptions}
-          />
-          <CustomDropdown
-            label="Context"
-            selectedValue={selectedContext}
-            onValueChange={(val) => setSelectedContext(val)}
-            options={contextOptions}
-          />
-        </View>
-      )}
-      {/* <Spacer /> */}
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          paddingRight: 16,
+        }}
+      >
+        <CustomDropdown
+          label="Project"
+          selectedValue={selectedProject}
+          onValueChange={(val) => setSelectedProject(val)}
+          options={projectOptions}
+        />
+        <CustomDropdown
+          label="Context"
+          selectedValue={selectedContext}
+          onValueChange={(val) => setSelectedContext(val)}
+          options={contextOptions}
+        />
+      </View>
 
-      {nextTasks.length === 0 ? (
+      <View style={{ paddingVertical: 16, alignSelf: "flex-start" }}>
+        <Text
+          onPress={() => setShowCompleted((prev) => !prev)}
+          style={[globalStyles.accent, { textAlign: "right" }]}
+        >
+          {showCompleted ? "Hide Completed Tasks" : "Show Completed Tasks"}
+        </Text>
+      </View>
+
+      {nextTasks.length === 0 && !showCompleted ? (
         hasAnyNextTasks || allCompleted ? (
           <AllCompletedComponent />
         ) : (
@@ -194,6 +225,42 @@ const NextActions = () => {
             </View>
           )}
         />
+      )}
+
+      {showCompleted && doneTasks.length > 0 && (
+        <View style={{ marginTop: 20 }}>
+          <Text style={[globalStyles.heading, { marginBottom: 8 }]}>
+            Completed Tasks
+          </Text>
+          <SmartList
+            data={doneTasks}
+            getKey={(task) => task.id}
+            onProcessItem={() => {}}
+            cardHeight={100}
+            renderItem={(task) => (
+              <View
+                style={[
+                  globalStyles.card,
+                  {
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    opacity: 0.5,
+                  },
+                ]}
+              >
+                <View>
+                  <Text style={globalStyles.text}>{task.title}</Text>
+                  {task.description ? (
+                    <Text style={globalStyles.text}>{task.description}</Text>
+                  ) : null}
+                </View>
+                <Text style={[globalStyles.text, { fontStyle: "italic" }]}>
+                  Done
+                </Text>
+              </View>
+            )}
+          />
+        </View>
       )}
     </AnimatedHeaderContainer>
   );
