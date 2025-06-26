@@ -16,9 +16,11 @@ import SmartList from "../../../src/components/List/SmartList";
 import { contextOptions, projectOptions } from "../../../src/constants/options";
 import LottieView from "lottie-react-native";
 import { useTheme } from "../../../src/context/ThemeContext";
+import { getGlobalStyles } from "../../../src/styles/GlobalStyles";
 
 const Process = () => {
   const { theme } = useTheme();
+  const globalStyles = getGlobalStyles(theme);
   const { tasks, updateTask } = useTaskStore();
   const scrollY = useRef(new Animated.Value(0)).current;
   const animationRef = useRef<LottieView>(null);
@@ -149,32 +151,44 @@ const Process = () => {
 
           return (
             <View
-              style={[styles.card, { backgroundColor: theme.backgroundColor }]}
-            >
-              <View
-                style={{
-                  flexDirection: "row",
+              style={[
+                globalStyles.card,
+                {
+                  flex: 1,
                   justifyContent: "space-between",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={[styles.title, { color: theme.textColor }]}>
-                  {task.title}
-                </Text>
-
-                <Animated.View
+                  paddingTop: 10,
+                },
+              ]}
+            >
+              <View>
+                <View
                   style={{
-                    transform: [{ translateX: slideAnim }],
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
                   }}
                 >
-                  <CustomTextButton title="Process Task" onPress={onProcess} />
-                </Animated.View>
+                  <Text style={[globalStyles.heading]}>{task.title}</Text>
+
+                  <Animated.View
+                    style={{
+                      transform: [{ translateX: slideAnim }],
+                    }}
+                  >
+                    <CustomTextButton
+                      title="Process Task"
+                      onPress={onProcess}
+                    />
+                  </Animated.View>
+                </View>
+                {task.description ? (
+                  <Text style={[globalStyles.text]}>{task.description}</Text>
+                ) : null}
               </View>
-              {task.description ? <Text>{task.description}</Text> : null}
 
-              <Spacer height={16} />
-
-              <View style={{ flexDirection: "row", gap: 16 }}>
+              <View
+                style={{ flexDirection: "row", justifyContent: "space-around" }}
+              >
                 <DropdownPicker
                   label="Context"
                   selectedValue={taskContexts[task.id] || "none"}
@@ -188,8 +202,6 @@ const Process = () => {
                   options={projectOptions}
                 />
               </View>
-
-              <Spacer height={16} />
             </View>
           );
         }}

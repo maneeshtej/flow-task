@@ -7,10 +7,11 @@ import {
   StyleSheet,
   FlatList,
   TouchableWithoutFeedback,
-  Animated,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "../../context/ThemeContext";
+import { getGlobalStyles } from "../../styles/GlobalStyles";
 
 type Option = {
   label: string;
@@ -31,37 +32,46 @@ const CustomDropdown = ({
   options,
 }: Props) => {
   const [open, setOpen] = useState(false);
-
-  const moveX = useRef(new Animated.Value(0)).current;
+  const { theme } = useTheme();
+  const globalStyles = getGlobalStyles(theme);
 
   const selectedLabel =
     options.find((opt) => opt.value === selectedValue)?.label || "Select";
 
   return (
-    <View style={styles.wrapper}>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 10,
-        }}
-      >
-        <Pressable onPress={() => setOpen(true)} style={styles.dropdownButton}>
-          <Text style={styles.buttonText}>{selectedLabel}</Text>
-          <Ionicons name="chevron-down" size={18} color="#4c1d95" />
+    <View>
+      <View style={styles.inlineRow}>
+        {label ? (
+          <Text style={[styles.label, { color: theme.textColor }]}>
+            {label} :
+          </Text>
+        ) : null}
+
+        <Pressable onPress={() => setOpen(true)} style={styles.inlineTrigger}>
+          <Text style={[styles.inlineText, { color: theme.accentColor }]}>
+            {selectedLabel}
+          </Text>
         </Pressable>
       </View>
 
       <Modal visible={open} transparent animationType="fade">
         <TouchableWithoutFeedback onPress={() => setOpen(false)}>
           <BlurView
-            intensity={10}
-            tint="dark"
+            intensity={15}
+            tint={theme.mode}
             style={StyleSheet.absoluteFill}
           />
         </TouchableWithoutFeedback>
 
-        <View style={styles.dropdown}>
+        <View
+          style={[
+            styles.dropdown,
+            {
+              backgroundColor: theme.mode === "dark" ? "rgb(30,30,30)" : "#fff",
+              borderColor: theme.mode === "dark" ? "#333" : "#eee",
+            },
+          ]}
+        >
           <FlatList
             data={options}
             keyExtractor={(item) => item.value}
@@ -73,7 +83,9 @@ const CustomDropdown = ({
                   setOpen(false);
                 }}
               >
-                <Text style={styles.itemText}>{item.label}</Text>
+                <Text style={[styles.itemText, { color: theme.textColor }]}>
+                  {item.label}
+                </Text>
               </Pressable>
             )}
           />
@@ -86,37 +98,24 @@ const CustomDropdown = ({
 export default CustomDropdown;
 
 const styles = StyleSheet.create({
-  wrapper: {},
+  inlineRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
   label: {
     fontSize: 14,
-    fontWeight: "600",
-    marginBottom: 6,
-    color: "#4c1d95",
-  },
-  dropdownButton: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    borderRadius: 10,
-    alignSelf: "flex-start",
-    gap: 10,
-    backgroundColor: "#f3e8ff",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-  },
-  buttonText: {
-    color: "black",
-    fontSize: 13,
+    fontWeight: "500",
   },
   dropdown: {
     position: "absolute",
     top: "40%",
     left: "10%",
     right: "10%",
-    backgroundColor: "#fff",
     borderRadius: 12,
     paddingVertical: 8,
     elevation: 5,
+    borderWidth: 1,
   },
   item: {
     paddingVertical: 12,
@@ -124,6 +123,15 @@ const styles = StyleSheet.create({
   },
   itemText: {
     fontSize: 16,
-    color: "#1e1e1e",
+  },
+  inlineTrigger: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingVertical: 4,
+  },
+  inlineText: {
+    fontSize: 14,
+    fontWeight: "500",
   },
 });

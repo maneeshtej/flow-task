@@ -6,6 +6,7 @@ import { CustomButton, CustomTextButton } from "./CustomButton";
 import { Ionicons } from "@expo/vector-icons";
 import { Divider, Spacer, Align, Heading } from "./Useful";
 import { useTheme } from "../context/ThemeContext";
+import { getGlobalStyles } from "../styles/GlobalStyles";
 
 type Props = {
   onAddTask: (title: string, desc?: string) => void;
@@ -13,6 +14,7 @@ type Props = {
 
 const AddTaskInput = ({ onAddTask }: Props) => {
   const { theme } = useTheme();
+  const globalStyles = getGlobalStyles(theme);
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const opacity = useRef(new Animated.Value(0)).current;
@@ -67,17 +69,17 @@ const AddTaskInput = ({ onAddTask }: Props) => {
           placeholder="Task Title"
           value={title}
           onChangeText={setTitle}
-          placeholderTextColor="#999"
-          style={[styles.input, { color: theme.textColor }]}
+          placeholderTextColor={globalStyles.text.color}
+          style={[styles.input, globalStyles.text]}
         />
         <Divider />
         <TextInput
           placeholder="Description (optional)"
           value={desc}
           onChangeText={setDesc}
-          placeholderTextColor="#999"
+          placeholderTextColor={globalStyles.text.color}
           multiline
-          style={[styles.input, styles.desc, { color: theme.textColor }]}
+          style={[globalStyles.text, styles.input, styles.desc]}
         />
         <Divider />
       </View>

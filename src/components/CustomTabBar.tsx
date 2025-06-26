@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   View,
   Text,
@@ -24,35 +24,29 @@ const CustomTabBar = () => {
   const router = useRouter();
   const { width } = useWindowDimensions();
 
-  const DISC_SIZE = width * 0.12 + 15;
-
+  const DISC_SIZE = width * 0.12 + 20;
   const containerRef = useRef<View>(null);
   const tabRefs = useRef<Record<string, View | null>>({});
 
   const discX = useRef(new Animated.Value(0)).current;
-  const discScale = useRef(new Animated.Value(0)).current;
   const [discIcon, setDiscIcon] = useState(tabs[0].icon);
   const [curLabel, setCurLabel] = useState(tabs[0].name);
+
   const fadeMap = useRef(
     Object.fromEntries(tabs.map((tab) => [tab.name, new Animated.Value(1)]))
   ).current;
 
   useEffect(() => {
     const activeTab = tabs.find((tab) => pathname.includes(tab.href));
-    if (
-      !activeTab ||
-      !tabRefs.current[activeTab.name] ||
-      !containerRef.current
-    ) {
-      return;
-    }
+    if (!activeTab || !tabRefs.current[activeTab.name]) return;
 
     tabRefs.current[activeTab.name]?.measureLayout(
-      containerRef.current,
+      containerRef.current!,
       (x, _y, width) => {
         const centerX = x + width / 2;
         setDiscIcon(activeTab.icon);
         setCurLabel(activeTab.name);
+
         Animated.spring(discX, {
           toValue: centerX - DISC_SIZE / 2,
           useNativeDriver: true,
@@ -68,43 +62,32 @@ const CustomTabBar = () => {
           }).start();
         });
       },
-
       () => console.error("measureLayout failed")
     );
   }, [pathname]);
 
-  const scale = discScale.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 1.3],
-  });
-
   return (
-    <View style={[styles.wrapper, { backgroundColor: theme.backgroundColor }]}>
-      {/* Floating Disc */}
+    <View style={styles.outerWrapper}>
+      {/* Floating Accent Disc */}
       <Animated.View
         style={[
           styles.floatingDisc,
           {
             transform: [{ translateX: discX }, { translateY: -DISC_SIZE / 2 }],
-
             width: DISC_SIZE,
             height: DISC_SIZE,
-            borderRadius: 70,
             backgroundColor: theme.accentColor,
           },
         ]}
       >
-        <Ionicons name={discIcon as any} size={20} color="#fff" />
-        <Text style={[styles.label, { color: "white", fontSize: 8 }]}>
-          {curLabel}
-        </Text>
+        <Ionicons name={discIcon as any} size={24} color="#fff" />
+        <Text style={styles.floatingText}>{curLabel}</Text>
       </Animated.View>
 
-      {/* Tab Bar */}
-      <View style={styles.tabBar} ref={containerRef}>
-        {tabs.map((tab) => {
-          const isActive = pathname.includes(tab.href);
-          return (
+      {/* Tab Group */}
+      <View style={[styles.innerWrapper]}>
+        <View style={styles.tabBar} ref={containerRef}>
+          {tabs.map((tab) => (
             <TouchableOpacity
               key={tab.name}
               ref={(ref) => {
@@ -116,19 +99,15 @@ const CustomTabBar = () => {
               <Animated.View
                 style={[styles.tab, { opacity: fadeMap[tab.name] }]}
               >
-                <Ionicons
-                  name={tab.icon as any}
-                  size={24}
-                  color={theme.textColor}
-                />
-                <Text style={[styles.label, { color: theme.textColor }]}>
-                  {tab.name}
-                </Text>
+                <Ionicons name={tab.icon as any} size={24} color="white" />
+                <Text style={styles.label}>{tab.name}</Text>
               </Animated.View>
             </TouchableOpacity>
-          );
-        })}
+          ))}
+        </View>
       </View>
+
+      {/* More Button */}
     </View>
   );
 };
@@ -136,22 +115,32 @@ const CustomTabBar = () => {
 export default CustomTabBar;
 
 const styles = StyleSheet.create({
-  wrapper: {
+  outerWrapper: {
     position: "absolute",
     bottom: 16,
     left: 16,
     right: 16,
+    flexDirection: "row",
+    height: 90,
+    zIndex: 100,
+    justifyContent: "space-between",
+    gap: 16,
+  },
+  innerWrapper: {
+    flex: 7,
     borderRadius: 30,
-    // backgroundColor: theme.backgroundColor,
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
+    justifyContent: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    opacity: 0.8,
+    borderColor: "rgb(50, 50,50)",
+    borderWidth: 1,
+    shadowColor: "black",
+    shadowOpacity: 0.25,
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 10,
-    elevation: 5,
-    zIndex: 100,
-    height: 80,
-    justifyContent: "center",
+    elevation: 6,
   },
+
   tabBar: {
     flexDirection: "row",
     justifyContent: "space-around",
@@ -163,21 +152,26 @@ const styles = StyleSheet.create({
     width: 60,
   },
   label: {
-    fontSize: 12,
-    // color: theme.textColor,
+    fontSize: 10,
+    color: "white",
     marginTop: 4,
   },
   floatingDisc: {
     position: "absolute",
     top: "50%",
-    // backgroundColor: theme.accentColor,
     justifyContent: "center",
     alignItems: "center",
+    borderRadius: 100,
     zIndex: 10,
     shadowColor: "#000",
     shadowOpacity: 0.3,
     shadowOffset: { width: 0, height: 4 },
     shadowRadius: 6,
     elevation: 8,
+  },
+  floatingText: {
+    color: "#fff",
+    fontSize: 8,
+    marginTop: 2,
   },
 });

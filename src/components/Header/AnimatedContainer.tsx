@@ -5,6 +5,7 @@ import { View, Animated, StyleSheet, ScrollViewProps } from "react-native";
 import { Spacer } from "../Useful";
 import HeaderBar from "./Header";
 import { useTheme } from "../../context/ThemeContext";
+import { getGlobalStyles } from "../../styles/GlobalStyles";
 
 type Props = {
   title: string;
@@ -14,8 +15,9 @@ type Props = {
 
 const AnimatedHeaderContainer = ({ title, scrollY, children }: Props) => {
   const { theme } = useTheme();
+  const globalStyles = getGlobalStyles(theme);
   return (
-    <View style={{ flex: 1, backgroundColor: theme.backgroundColor }}>
+    <View style={[globalStyles.background, { flex: 1 }]}>
       <HeaderBar title={title} scrollY={scrollY} />
       <Animated.ScrollView
         contentContainerStyle={styles.scrollContent}

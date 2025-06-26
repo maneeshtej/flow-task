@@ -2,6 +2,7 @@ import { View, Text, ViewStyle } from "react-native";
 import React from "react";
 import { GlobalStyles } from "../styles/globals";
 import { useTheme } from "../context/ThemeContext";
+import { getGlobalStyles } from "../styles/GlobalStyles";
 
 type SpacerProps = {
   height?: number;
@@ -27,20 +28,25 @@ export const Spacer = ({ height = 20, width = 0 }: SpacerProps) => {
 
 export const Divider = () => {
   const { theme } = useTheme();
+  const globalStyles = getGlobalStyles(theme);
   return (
     <View
-      style={{ borderBottomColor: theme.textColor, borderBottomWidth: 0.5 }}
+      style={{
+        borderBottomColor: globalStyles.text.color,
+        borderBottomWidth: 0.5,
+      }}
     />
   );
 };
 
 export const Heading = ({ text, accent }: TextProps) => {
   const { theme } = useTheme();
+  const globalStyles = getGlobalStyles(theme);
   return (
     <Text
       style={[
-        GlobalStyles.heading,
-        { color: accent ? theme.accentColor : theme.textColor },
+        globalStyles.heading,
+        { color: accent ? globalStyles.accent.color : globalStyles.text.color },
       ]}
     >
       {text}
@@ -50,9 +56,8 @@ export const Heading = ({ text, accent }: TextProps) => {
 
 export const Title = ({ text }: TextProps) => {
   const { theme } = useTheme();
-  return (
-    <Text style={[GlobalStyles.title, { color: theme.textColor }]}>{text}</Text>
-  );
+  const globalStyles = getGlobalStyles(theme);
+  return <Text style={[globalStyles.title]}>{text}</Text>;
 };
 
 export const Align = ({

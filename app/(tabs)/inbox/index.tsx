@@ -6,6 +6,7 @@ import AddTaskInput from "../../../src/components/AddTaskInput";
 import AnimatedHeaderContainer from "../../../src/components/Header/AnimatedContainer";
 import LottieView from "lottie-react-native";
 import { useTheme } from "../../../src/context/ThemeContext";
+import { getGlobalStyles } from "../../../src/styles/GlobalStyles";
 
 export default function InboxScreen() {
   const { tasks, addTask } = useTaskStore();
@@ -13,6 +14,7 @@ export default function InboxScreen() {
 
   const scrollY = useRef(new Animated.Value(0)).current;
   const { theme } = useTheme();
+  const globalStyles = getGlobalStyles(theme);
 
   return (
     <AnimatedHeaderContainer title="Inbox" scrollY={scrollY}>
@@ -23,10 +25,7 @@ export default function InboxScreen() {
 
       {inboxTasks.length > 0 ? (
         inboxTasks.map((item) => (
-          <View
-            key={item.id}
-            style={[styles.card, { backgroundColor: theme.backgroundColor }]}
-          >
+          <View key={item.id} style={[globalStyles.card]}>
             <Text style={[styles.title, { color: theme.textColor }]}>
               {item.title}
             </Text>

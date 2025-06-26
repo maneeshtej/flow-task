@@ -9,9 +9,11 @@ import { GlobalStyles } from "../../../src/styles/globals";
 import { Spacer } from "../../../src/components/Useful";
 import LottieView from "lottie-react-native";
 import { useTheme } from "../../../src/context/ThemeContext";
+import { getGlobalStyles } from "../../../src/styles/GlobalStyles";
 
 const NextActions = () => {
   const { theme } = useTheme();
+  const globalStyles = getGlobalStyles(theme);
   const scrollY = useRef(new Animated.Value(0)).current;
 
   const { tasks, updateTask } = useTaskStore();
@@ -54,12 +56,14 @@ const NextActions = () => {
         }}
       >
         <LottieView
-          source={require("../../../assets/lottie/Trophy.json")}
+          source={require("../../../assets/lottie/confetti.json")}
           autoPlay={true}
           loop={true}
           style={{ height: 200, width: 200 }}
         />
-        <Text style={styles.emptyText}>You're all caught up</Text>
+        <Text style={[styles.emptyText, { color: theme.textColor }]}>
+          You're all caught up
+        </Text>
       </View>
     );
   };
@@ -80,7 +84,9 @@ const NextActions = () => {
           style={{ height: 200, width: 200 }}
           ref={animationRef}
         />
-        <Text style={styles.emptyText}>Go to inbox page to add tasks</Text>
+        <Text style={[styles.emptyText, { color: theme.textColor }]}>
+          Go to inbox page to add tasks
+        </Text>
       </View>
     );
   };
@@ -93,7 +99,6 @@ const NextActions = () => {
         duration: 300,
         useNativeDriver: false,
       }).start(() => {
-        // reset flag
         wasJustCompleted.current = false;
       });
     }
@@ -128,7 +133,13 @@ const NextActions = () => {
   return (
     <AnimatedHeaderContainer title="Next" scrollY={scrollY}>
       {hasAnyNextTasks && (
-        <View style={{ flexDirection: "row", gap: 16 }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            paddingRight: 16,
+          }}
+        >
           <CustomDropdown
             label="Project"
             selectedValue={selectedProject}
@@ -143,9 +154,10 @@ const NextActions = () => {
           />
         </View>
       )}
+      {/* <Spacer /> */}
 
-      {nextTasks.length === 0 && tasks.length > 0 ? (
-        allCompleted ? (
+      {nextTasks.length === 0 ? (
+        hasAnyNextTasks || allCompleted ? (
           <AllCompletedComponent />
         ) : (
           <EmptyComponent />
@@ -159,7 +171,7 @@ const NextActions = () => {
           renderItem={(task, _anim, _onProcess) => (
             <View
               style={[
-                GlobalStyles.minimalCard,
+                globalStyles.card,
                 {
                   flex: 1,
                   flexDirection: "row",
@@ -168,12 +180,14 @@ const NextActions = () => {
               ]}
             >
               <View style={{ flexDirection: "column", gap: 16 }}>
-                <Text>{task.title}</Text>
-                {task.description ? <Text>{task.description}</Text> : null}
+                <Text style={[globalStyles.text]}>{task.title}</Text>
+                {task.description ? (
+                  <Text style={[globalStyles.text]}>{task.description}</Text>
+                ) : null}
               </View>
 
               <View>
-                <Text onPress={_onProcess} style={{ color: theme.accentColor }}>
+                <Text onPress={_onProcess} style={[globalStyles.accent]}>
                   Mark Done
                 </Text>
               </View>

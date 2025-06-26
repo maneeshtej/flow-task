@@ -5,6 +5,7 @@ import { Spacer } from "../Useful";
 import { Ionicons } from "@expo/vector-icons";
 import { useTaskStore } from "../../store/taskStore";
 import { useTheme } from "../../context/ThemeContext";
+import { getGlobalStyles } from "../../styles/GlobalStyles";
 
 type HeaderProp = {
   title: string;
@@ -16,6 +17,7 @@ const MIN_HEADER_HEIGHT = 60;
 
 const HeaderBar = ({ title, scrollY }: HeaderProp) => {
   const { theme } = useTheme();
+  const globalStyles = getGlobalStyles(theme);
   const fontSize = scrollY.interpolate({
     inputRange: [0, MAX_HEADER_HEIGHT - MIN_HEADER_HEIGHT],
     outputRange: [50, 30],
@@ -34,17 +36,16 @@ const HeaderBar = ({ title, scrollY }: HeaderProp) => {
       <View style={styles.container}>
         <Animated.Text
           style={[
-            GlobalStyles.title,
+            globalStyles.title,
             {
               fontSize,
               lineHeight: fontSize,
-              color: theme.textColor,
             },
           ]}
         >
           {title}
         </Animated.Text>
-        {/* <Animated.View
+        <Animated.View
           style={{
             justifyContent: "center",
             alignItems: "center",
@@ -56,7 +57,7 @@ const HeaderBar = ({ title, scrollY }: HeaderProp) => {
             size={35}
             onPress={clearTasks}
           />
-        </Animated.View> */}
+        </Animated.View>
       </View>
       <Spacer />
     </View>

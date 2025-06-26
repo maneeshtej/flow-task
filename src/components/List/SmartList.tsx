@@ -39,7 +39,11 @@ export default function SmartList<T>({
   };
 
   return (
-    <View>
+    <View
+      style={{
+        flex: 1,
+      }}
+    >
       {data.map((item) => {
         const key = getKey(item);
 

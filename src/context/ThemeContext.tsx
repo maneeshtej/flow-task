@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
-import { lightThemeBase, darkThemeBase } from "../styles/globals";
-import { Theme } from "../styles/globals";
+import { lightThemeBase, darkThemeBase } from "../constants/theme";
+import { Theme } from "../constants/theme";
 
 interface ThemeContextType {
   theme: Theme;
