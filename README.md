@@ -63,37 +63,6 @@ npx expo start
 Then scan the QR code with the **Expo Go** app on your mobile device,  
 or run the project on an emulator using:
 
-### 📁 Folder Structure (Simplified)
-
-app/
-└── (tabs)/
-    ├── inbox/
-    ├── process/
-    ├── next-actions/
-    └── more/
-
-src/
-├── components/
-├── context/
-├── store/
-├── models/
-├── constants/
-└── styles/
-
-### ⚙️ Configuration & Architecture
-
-- ThemeContext  
-  Manages light/dark mode and accent color via React Context + AsyncStorage.
-
-- taskStore & projectStore  
-  Zustand-based global state management with data persistence.
-
-- CustomTabBar  
-  Custom animated floating disc tab bar with active tab highlight.
-
-- AnimatedHeaderContainer  
-  Shared layout with animated headers responding to scroll.
-
 ### 📄 License
 
 MIT © Tej Sai Maneesh
