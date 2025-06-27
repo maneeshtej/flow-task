@@ -58,32 +58,43 @@ npm install
 npx expo start
 ```
 
-Then scan the QR code with the Expo Go app on your mobile device or run on emulator.
+### 🚀 Run Instructions
+
+Then scan the QR code with the **Expo Go** app on your mobile device,  
+or run the project on an emulator using:
 
 ### 📁 Folder Structure (Simplified)
 
 app/
- └── (tabs)/
-      ├── inbox/
-      ├── process/
-      ├── next-actions/
-      └── more/
+└── (tabs)/
+    ├── inbox/
+    ├── process/
+    ├── next-actions/
+    └── more/
 
 src/
- ├── components/
- ├── context/
- ├── store/
- ├── models/
- ├── constants/
- └── styles/
- 
-### ⚙️ Configuration
+├── components/
+├── context/
+├── store/
+├── models/
+├── constants/
+└── styles/
 
-ThemeContext: Manages dark/light mode and accent color
-taskStore and projectStore: Use Zustand for global state and persistence
-Custom tab bar (CustomTabBar) with animated floating disc
-Animated headers via AnimatedHeaderContainer
+### ⚙️ Configuration & Architecture
+
+- ThemeContext  
+  Manages light/dark mode and accent color via React Context + AsyncStorage.
+
+- taskStore & projectStore  
+  Zustand-based global state management with data persistence.
+
+- CustomTabBar  
+  Custom animated floating disc tab bar with active tab highlight.
+
+- AnimatedHeaderContainer  
+  Shared layout with animated headers responding to scroll.
 
 ### 📄 License
 
 MIT © Tej Sai Maneesh
+
