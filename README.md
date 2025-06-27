@@ -18,7 +18,7 @@ A mobile productivity app inspired by the [Getting Things Done (GTD)](https://ge
 
 ## 📸 Screenshots
 
-(https://drive.google.com/drive/folders/1cYOLnSF-J_dJOjj29n8az-Qo18uQE1XY?usp=sharing)
+https://drive.google.com/drive/folders/1cYOLnSF-J_dJOjj29n8az-Qo18uQE1XY?usp=sharing
 
 ---
 
