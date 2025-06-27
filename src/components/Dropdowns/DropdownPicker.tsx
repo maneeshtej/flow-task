@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -9,9 +9,7 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { BlurView } from "expo-blur";
-import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "../../context/ThemeContext";
-import { getGlobalStyles } from "../../styles/GlobalStyles";
 
 type Option = {
   label: string;
@@ -31,15 +29,19 @@ const CustomDropdown = ({
   onValueChange,
   options,
 }: Props) => {
+  // Local state to track dropdown open/closed
   const [open, setOpen] = useState(false);
-  const { theme } = useTheme();
-  const globalStyles = getGlobalStyles(theme);
 
+  // Access theme from context
+  const { theme } = useTheme();
+
+  // Resolve label text from selected value
   const selectedLabel =
     options.find((opt) => opt.value === selectedValue)?.label || "Select";
 
   return (
     <View>
+      {/* Label + Selected value displayed inline */}
       <View style={styles.inlineRow}>
         {label ? (
           <Text style={[styles.label, { color: theme.textColor }]}>
@@ -47,6 +49,7 @@ const CustomDropdown = ({
           </Text>
         ) : null}
 
+        {/* Button to open modal */}
         <Pressable onPress={() => setOpen(true)} style={styles.inlineTrigger}>
           <Text style={[styles.inlineText, { color: theme.accentColor }]}>
             {selectedLabel}
@@ -54,7 +57,9 @@ const CustomDropdown = ({
         </Pressable>
       </View>
 
+      {/* Fullscreen modal for dropdown selection */}
       <Modal visible={open} transparent animationType="fade">
+        {/* Tap outside to close */}
         <TouchableWithoutFeedback onPress={() => setOpen(false)}>
           <BlurView
             intensity={15}
@@ -63,6 +68,7 @@ const CustomDropdown = ({
           />
         </TouchableWithoutFeedback>
 
+        {/* Dropdown container */}
         <View
           style={[
             styles.dropdown,
@@ -72,6 +78,7 @@ const CustomDropdown = ({
             },
           ]}
         >
+          {/* List of selectable options */}
           <FlatList
             data={options}
             keyExtractor={(item) => item.value}
@@ -79,8 +86,8 @@ const CustomDropdown = ({
               <Pressable
                 style={styles.item}
                 onPress={() => {
-                  onValueChange(item.value);
-                  setOpen(false);
+                  onValueChange(item.value); // Send selected value
+                  setOpen(false); // Close modal
                 }}
               >
                 <Text style={[styles.itemText, { color: theme.textColor }]}>

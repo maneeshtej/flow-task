@@ -1,35 +1,53 @@
 import { View, Text, StyleSheet, Animated } from "react-native";
-import { useRef, useState } from "react";
+import { useRef } from "react";
+
+// State management store
 import { useTaskStore } from "../../../src/store/taskStore";
+
+// Shared UI components
 import { Heading, Spacer } from "../../../src/components/Useful";
 import AddTaskInput from "../../../src/components/AddTaskInput";
 import AnimatedHeaderContainer from "../../../src/components/Header/AnimatedContainer";
+
+// Lottie animation for empty state
 import LottieView from "lottie-react-native";
+
+// Theming system
 import { useTheme } from "../../../src/context/ThemeContext";
 import { getGlobalStyles } from "../../../src/styles/GlobalStyles";
-import { useProjectStore } from "../../../src/store/projectStore";
 
 export default function InboxScreen() {
+  // Get all tasks and the addTask function from the global task store
   const { tasks, addTask } = useTaskStore();
   const inboxTasks = tasks.filter((t) => t.status === "inbox");
 
+  // Scroll position for animated header behavior
   const scrollY = useRef(new Animated.Value(0)).current;
+
+  // Theme and global styles for current theme
   const { theme } = useTheme();
   const globalStyles = getGlobalStyles(theme);
 
   return (
     <AnimatedHeaderContainer title="Inbox" scrollY={scrollY}>
+      {/* Input field to add new tasks */}
       <AddTaskInput onAddTask={(title, desc) => addTask(title, desc)} />
+
       <Spacer height={40} />
+
+      {/*  Section heading */}
       <Heading text="Tasks" accent />
       <Spacer />
 
+      {/*  Render inbox tasks if present */}
       {inboxTasks.length > 0 ? (
         inboxTasks.map((item) => (
           <View key={item.id} style={[globalStyles.card]}>
             <Text style={[styles.title, { color: theme.textColor }]}>
               {item.title}
             </Text>
+
+            {/* Optional description */}
             {item.description && (
               <Text style={[styles.description, { color: theme.textColor }]}>
                 {item.description}
@@ -38,6 +56,7 @@ export default function InboxScreen() {
           </View>
         ))
       ) : (
+        // Fallback when no inbox tasks
         <View
           style={{
             height: 200,
@@ -60,6 +79,7 @@ export default function InboxScreen() {
   );
 }
 
+// Local styles (for layout + fallback)
 const styles = StyleSheet.create({
   card: {
     backgroundColor: "#fff",

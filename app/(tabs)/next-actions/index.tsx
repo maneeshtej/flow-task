@@ -5,28 +5,39 @@ import { useTaskStore } from "../../../src/store/taskStore";
 import CustomDropdown from "../../../src/components/Dropdowns/DropdownPicker";
 import { contextOptions } from "../../../src/constants/options";
 import SmartList from "../../../src/components/List/SmartList";
-import { GlobalStyles } from "../../../src/styles/globals";
-import { Spacer } from "../../../src/components/Useful";
 import LottieView from "lottie-react-native";
 import { useTheme } from "../../../src/context/ThemeContext";
 import { getGlobalStyles } from "../../../src/styles/GlobalStyles";
 import { useProjectStore } from "../../../src/store/projectStore";
 
 const NextActions = () => {
+  // Theme and global styles
   const { theme } = useTheme();
-  const { projects } = useProjectStore();
   const globalStyles = getGlobalStyles(theme);
+
+  // Scroll position for animated header
   const scrollY = useRef(new Animated.Value(0)).current;
 
+  // Task and project state
   const { tasks, updateTask } = useTaskStore();
+  const { projects } = useProjectStore();
+
+  // Filter state
   const [selectedContext, setSelectedContext] = useState("all");
   const [selectedProject, setSelectedProject] = useState("all");
+
+  // Completion tracking
   const [allCompleted, setAllCompleted] = useState(false);
   const animOpacity = useRef(new Animated.Value(0)).current;
   const wasJustCompleted = useRef(false);
+
+  // Animation control
   const animationRef = useRef<LottieView>(null);
+
+  // Toggle to show completed tasks
   const [showCompleted, setShowCompleted] = useState(false);
 
+  // Filtered list of 'next' tasks
   const nextTasks = useMemo(() => {
     return tasks.filter((task) => {
       const isNext = task.status === "next";
@@ -39,6 +50,7 @@ const NextActions = () => {
     });
   }, [tasks, selectedContext, selectedProject]);
 
+  // Filtered list of 'done' tasks
   const doneTasks = useMemo(() => {
     return tasks.filter((task) => {
       const isDone = task.status === "done";
@@ -51,15 +63,18 @@ const NextActions = () => {
     });
   }, [tasks, selectedContext, selectedProject]);
 
+  // Whether any next tasks exist at all
   const hasAnyNextTasks = useMemo(() => {
     return tasks.some((task) => task.status === "next");
   }, [tasks]);
 
+  // Handler to mark a task as done
   const markAsDone = (taskId: string) => {
     updateTask(taskId, { status: "done" });
     wasJustCompleted.current = true;
   };
 
+  // Project dropdown options
   const projectOptions = useMemo(() => {
     return [
       { label: "All Projects", value: "all" },
@@ -70,6 +85,7 @@ const NextActions = () => {
     ];
   }, [projects]);
 
+  // UI component: all tasks completed animation
   const AllCompletedComponent = () => {
     return (
       <View
@@ -81,10 +97,10 @@ const NextActions = () => {
         }}
       >
         <LottieView
-          source={require("../../../assets/lottie/confetti.json")}
+          source={require("../../../assets/lottie/Trophy.json")}
           autoPlay={true}
           loop={true}
-          style={{ height: 200, width: 200 }}
+          style={{ height: 300, width: 300 }}
         />
         <Text style={[styles.emptyText, { color: theme.textColor }]}>
           You're all caught up
@@ -93,6 +109,7 @@ const NextActions = () => {
     );
   };
 
+  // UI component: no next tasks yet
   const EmptyComponent = () => {
     return (
       <View
@@ -116,6 +133,7 @@ const NextActions = () => {
     );
   };
 
+  // Animate 'all completed' Lottie when nextTasks just became empty
   useEffect(() => {
     if (wasJustCompleted.current && nextTasks.length === 0) {
       setAllCompleted(true);
@@ -129,21 +147,7 @@ const NextActions = () => {
     }
   }, [nextTasks.length]);
 
-  const opacity = animOpacity.interpolate({
-    inputRange: [0, 1],
-    outputRange: [1, 0],
-  });
-
-  const height = animOpacity.interpolate({
-    inputRange: [0, 1],
-    outputRange: [30, 0],
-  });
-
-  const animationOpacity = animOpacity.interpolate({
-    inputRange: [0, 1],
-    outputRange: [0, 1],
-  });
-
+  // Reset animation state and play tumbleweed animation
   useEffect(() => {
     setAllCompleted(false);
     animOpacity.setValue(0);
@@ -157,6 +161,7 @@ const NextActions = () => {
 
   return (
     <AnimatedHeaderContainer title="Next" scrollY={scrollY}>
+      {/* Dropdown filters for project and context */}
       <View
         style={{
           flexDirection: "row",
@@ -178,6 +183,7 @@ const NextActions = () => {
         />
       </View>
 
+      {/* Toggle to show/hide completed tasks */}
       <View style={{ paddingVertical: 16, alignSelf: "flex-start" }}>
         <Text
           onPress={() => setShowCompleted((prev) => !prev)}
@@ -187,6 +193,7 @@ const NextActions = () => {
         </Text>
       </View>
 
+      {/* Show empty/complete animation if no tasks */}
       {nextTasks.length === 0 && !showCompleted ? (
         hasAnyNextTasks || allCompleted ? (
           <AllCompletedComponent />
@@ -194,6 +201,7 @@ const NextActions = () => {
           <EmptyComponent />
         )
       ) : (
+        // Render list of next tasks using SmartList
         <SmartList
           data={nextTasks}
           getKey={(task) => task.id}
@@ -227,6 +235,7 @@ const NextActions = () => {
         />
       )}
 
+      {/* Completed task list (shown only if toggled on) */}
       {showCompleted && doneTasks.length > 0 && (
         <View style={{ marginTop: 20 }}>
           <Text style={[globalStyles.heading, { marginBottom: 8 }]}>

@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { usePathname, useRouter } from "expo-router";
 import { useTheme } from "../context/ThemeContext";
 
+// Define tabs with name, route, and icon
 const tabs = [
   { name: "Inbox", href: "/inbox", icon: "mail-outline" },
   { name: "Process", href: "/process", icon: "funnel-outline" },
@@ -20,33 +21,39 @@ const tabs = [
 
 const CustomTabBar = () => {
   const { theme } = useTheme();
-  const pathname = usePathname();
-  const router = useRouter();
+  const pathname = usePathname(); // Get current route
+  const router = useRouter(); // Navigation
   const { width } = useWindowDimensions();
 
-  const DISC_SIZE = width * 0.12 + 20;
-  const containerRef = useRef<View>(null);
-  const tabRefs = useRef<Record<string, View | null>>({});
+  const DISC_SIZE = width * 0.12 + 20; // Floating disc diameter
+  const containerRef = useRef<View>(null); // Ref to the tab bar container
+  const tabRefs = useRef<Record<string, View | null>>({}); // Refs for each tab
 
-  const discX = useRef(new Animated.Value(0)).current;
-  const [discIcon, setDiscIcon] = useState(tabs[0].icon);
-  const [curLabel, setCurLabel] = useState(tabs[0].name);
+  const discX = useRef(new Animated.Value(0)).current; // Disc horizontal movement
+  const [discIcon, setDiscIcon] = useState(tabs[0].icon); // Current active icon
+  const [curLabel, setCurLabel] = useState(tabs[0].name); // Current active label
 
+  // Per-tab opacity for fade animations
   const fadeMap = useRef(
     Object.fromEntries(tabs.map((tab) => [tab.name, new Animated.Value(1)]))
   ).current;
 
+  // On route change
   useEffect(() => {
     const activeTab = tabs.find((tab) => pathname.includes(tab.href));
     if (!activeTab || !tabRefs.current[activeTab.name]) return;
 
+    // Get tab position to animate disc to it
     tabRefs.current[activeTab.name]?.measureLayout(
       containerRef.current!,
       (x, _y, width) => {
         const centerX = x + width / 2;
+
+        // Update disc content
         setDiscIcon(activeTab.icon);
         setCurLabel(activeTab.name);
 
+        // Animate disc movement
         Animated.spring(discX, {
           toValue: centerX - DISC_SIZE / 2,
           useNativeDriver: true,
@@ -54,6 +61,7 @@ const CustomTabBar = () => {
           bounciness: 8,
         }).start();
 
+        // Fade active tab out (since disc covers it)
         tabs.forEach((tab) => {
           Animated.timing(fadeMap[tab.name], {
             toValue: tab.name === activeTab.name ? 0 : 1,
@@ -85,13 +93,13 @@ const CustomTabBar = () => {
       </Animated.View>
 
       {/* Tab Group */}
-      <View style={[styles.innerWrapper]}>
+      <View style={styles.innerWrapper}>
         <View style={styles.tabBar} ref={containerRef}>
           {tabs.map((tab) => (
             <TouchableOpacity
               key={tab.name}
               ref={(ref) => {
-                tabRefs.current[tab.name] = ref;
+                tabRefs.current[tab.name] = ref; // Save ref for measuring
               }}
               onPress={() => router.push(`/(tabs)${tab.href}`)}
               activeOpacity={0.8}
@@ -112,6 +120,7 @@ const CustomTabBar = () => {
 
 export default CustomTabBar;
 
+// Styles for the entire custom tab bar layout
 const styles = StyleSheet.create({
   outerWrapper: {
     position: "absolute",
@@ -137,7 +146,6 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 6,
   },
-
   tabBar: {
     flexDirection: "row",
     justifyContent: "space-around",

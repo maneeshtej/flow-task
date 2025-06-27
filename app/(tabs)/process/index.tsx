@@ -1,11 +1,5 @@
 import { View, Text, Animated, StyleSheet } from "react-native";
-import React, {
-  useDebugValue,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import AnimatedHeaderContainer from "../../../src/components/Header/AnimatedContainer";
 import { useTaskStore } from "../../../src/store/taskStore";
 import { Spacer } from "../../../src/components/Useful";
@@ -20,27 +14,41 @@ import { getGlobalStyles } from "../../../src/styles/GlobalStyles";
 import { useProjectStore } from "../../../src/store/projectStore";
 
 const Process = () => {
+  // Theme and global styles
   const { theme } = useTheme();
   const globalStyles = getGlobalStyles(theme);
+
+  // App state stores
   const { tasks, updateTask } = useTaskStore();
   const { projects } = useProjectStore();
+
+  // Animated scroll position
   const scrollY = useRef(new Animated.Value(0)).current;
+
+  // Reference for tumbleweed Lottie animation
   const animationRef = useRef<LottieView>(null);
 
+  // Filter inbox tasks (unprocessed)
   const inboxTasks = tasks.filter((task) => task.status === "inbox");
 
+  // Selected context and project for each task
   const [taskContexts, setTaskContexts] = useState<Record<string, string>>({});
   const [taskProjects, setTaskProjects] = useState<Record<string, string>>({});
+
+  // Track if all tasks are processed
   const [allCompleted, setAllCompleted] = useState(false);
 
+  // Handle context dropdown change for a task
   const handleContextChange = (taskId: string, value: string) => {
     setTaskContexts((prev) => ({ ...prev, [taskId]: value }));
   };
 
+  // Handle project dropdown change for a task
   const handleProjectChange = (taskId: string, value: string) => {
     setTaskProjects((prev) => ({ ...prev, [taskId]: value }));
   };
 
+  // Finalize and update a task as "next"
   const handleProcessTask = (task: Task) => {
     const context = taskContexts[task.id];
     const projectId = taskProjects[task.id];
@@ -52,14 +60,17 @@ const Process = () => {
     });
   };
 
+  // Track slide-in animations for each task
   const slideAnimationsRef = useRef<Record<string, Animated.Value>>({});
 
+  // Initialize slide animations if not already present
   inboxTasks.forEach((task) => {
     if (!slideAnimationsRef.current[task.id]) {
       slideAnimationsRef.current[task.id] = new Animated.Value(150);
     }
   });
 
+  // Generate dropdown options for projects
   const projectOptions = useMemo(() => {
     return [
       { label: "None", value: "none" },
@@ -67,52 +78,51 @@ const Process = () => {
     ];
   }, [projects]);
 
-  const AllCompletedComponent = () => {
-    return (
-      <View
-        style={{
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          height: 400,
-        }}
-      >
-        <LottieView
-          source={require("../../../assets/lottie/confetti.json")}
-          autoPlay={true}
-          loop={true}
-          style={{ height: 200, width: 200 }}
-        />
-        <Text style={[styles.emptyText, { color: theme.textColor }]}>
-          You're all caught up
-        </Text>
-      </View>
-    );
-  };
+  // UI: All tasks processed
+  const AllCompletedComponent = () => (
+    <View
+      style={{
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        height: 400,
+      }}
+    >
+      <LottieView
+        source={require("../../../assets/lottie/confetti.json")}
+        autoPlay={true}
+        loop={true}
+        style={{ height: 200, width: 200 }}
+      />
+      <Text style={[styles.emptyText, { color: theme.textColor }]}>
+        You're all caught up
+      </Text>
+    </View>
+  );
 
-  const EmptyComponent = () => {
-    return (
-      <View
-        style={{
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          marginTop: 50,
-        }}
-      >
-        <LottieView
-          source={require("../../../assets/lottie/tumble-weed.json")}
-          loop={true}
-          style={{ height: 200, width: 200 }}
-          ref={animationRef}
-        />
-        <Text style={[styles.emptyText, { color: theme.textColor }]}>
-          Go to inbox page to add tasks
-        </Text>
-      </View>
-    );
-  };
+  // UI: No tasks in inbox
+  const EmptyComponent = () => (
+    <View
+      style={{
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: 50,
+      }}
+    >
+      <LottieView
+        source={require("../../../assets/lottie/tumble-weed.json")}
+        loop={true}
+        style={{ height: 200, width: 200 }}
+        ref={animationRef}
+      />
+      <Text style={[styles.emptyText, { color: theme.textColor }]}>
+        Go to inbox page to add tasks
+      </Text>
+    </View>
+  );
 
+  // Animate visibility of "Process Task" button when both dropdowns are selected
   useEffect(() => {
     inboxTasks.forEach((task) => {
       const context = taskContexts[task.id];
@@ -129,28 +139,33 @@ const Process = () => {
     });
   }, [taskContexts, taskProjects]);
 
+  // Trigger "all completed" state if inbox is empty
   useEffect(() => {
     if (tasks.length > 0 && inboxTasks.length === 0) {
       setAllCompleted(true);
     }
   }, [inboxTasks.length]);
 
+  // Play tumbleweed animation when inbox is empty
   useEffect(() => {
-    if (inboxTasks.length == 0) {
+    if (inboxTasks.length === 0) {
       setAllCompleted(false);
     }
 
     const timeout = setTimeout(() => {
       animationRef.current?.play();
     }, 500);
+
     return () => clearTimeout(timeout);
   }, []);
 
   return (
     <AnimatedHeaderContainer scrollY={scrollY} title="Process">
+      {/* Show empty or all-complete view if no inbox tasks */}
       {inboxTasks.length === 0 &&
         (allCompleted ? <AllCompletedComponent /> : <EmptyComponent />)}
 
+      {/* Main task list */}
       <SmartList
         data={inboxTasks}
         getKey={(task) => task.id}
@@ -169,6 +184,7 @@ const Process = () => {
                 },
               ]}
             >
+              {/* Task title and process button */}
               <View>
                 <View
                   style={{
@@ -190,13 +206,19 @@ const Process = () => {
                     />
                   </Animated.View>
                 </View>
+
+                {/* Optional description */}
                 {task.description ? (
                   <Text style={[globalStyles.text]}>{task.description}</Text>
                 ) : null}
               </View>
 
+              {/* Context and Project dropdowns */}
               <View
-                style={{ flexDirection: "row", justifyContent: "space-around" }}
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-around",
+                }}
               >
                 <DropdownPicker
                   label="Context"

@@ -7,24 +7,25 @@ import {
   Text,
 } from "react-native";
 import React, { useState } from "react";
-import {
-  Divider,
-  Heading,
-  Spacer,
-  Title,
-} from "../../../src/components/Useful";
+import { Divider, Heading, Spacer } from "../../../src/components/Useful";
 import { CustomTextButton } from "../../../src/components/CustomButton";
 import { useTheme } from "../../../src/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
-import { useProjectStore } from "../../../src/store/projectStore"; // ✅ Update path as needed
+import { useProjectStore } from "../../../src/store/projectStore";
 
 const accentColors = ["#3b82f6", "#8b5cf6", "#ef4444", "#10b981", "#f59e0b"];
 
 const More = () => {
+  // Access theme functions and values
   const { theme, toggleTheme, setAccentColor } = useTheme();
+
+  // Access project state and actions
   const { projects, addProject, deleteProject } = useProjectStore();
+
+  // Local state to hold input for new project
   const [projectName, setProjectName] = useState("");
 
+  // Handle adding a new project
   const handleAddProject = () => {
     if (projectName.trim()) {
       addProject(projectName.trim());
@@ -36,16 +37,19 @@ const More = () => {
     <View
       style={[styles.container, { backgroundColor: theme.backgroundColor }]}
     >
-      {/* Appearance Settings */}
+      {/* Appearance section: theme toggle and accent color */}
       <Heading text="Appearance" color={theme.textColor} />
       <Spacer />
 
+      {/* Toggle between light/dark mode */}
       <CustomTextButton title="Toggle Theme" onPress={toggleTheme} />
       <Spacer height={16} />
 
+      {/* Accent color selection */}
       <Heading text="Accent Color" color={theme.textColor} />
       <Spacer height={16} />
 
+      {/* Color options as touchable dots */}
       <View style={styles.colorRow}>
         {accentColors.map((color, index) => (
           <TouchableOpacity
@@ -68,10 +72,11 @@ const More = () => {
       <Divider />
       <Spacer height={30} />
 
-      {/* Project Management */}
+      {/* Project management section */}
       <Heading text="Projects" color={theme.textColor} />
       <Spacer />
 
+      {/* Input field and button to add new project */}
       <View style={styles.addRow}>
         <TextInput
           value={projectName}
@@ -88,14 +93,18 @@ const More = () => {
         </TouchableOpacity>
       </View>
 
+      {/* Render the list of projects */}
       <FlatList
         data={projects}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.projectItem}>
+            {/* Display project name */}
             <Text style={[styles.projectText, { color: theme.textColor }]}>
               {item.name}
             </Text>
+
+            {/* Show delete icon for non-default projects */}
             <TouchableOpacity style={{ paddingHorizontal: 26 }}>
               {item.name !== "Personal" &&
                 item.name !== "Work" &&
@@ -112,6 +121,7 @@ const More = () => {
             </TouchableOpacity>
           </View>
         )}
+        // Message when no projects are available
         ListEmptyComponent={
           <Text style={[{ color: "#888", fontStyle: "italic", marginTop: 10 }]}>
             No projects added yet.
