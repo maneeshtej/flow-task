@@ -12,12 +12,14 @@ import { CustomTextButton } from "../../../src/components/CustomButton";
 import { useTheme } from "../../../src/context/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useProjectStore } from "../../../src/store/projectStore";
+import { getGlobalStyles } from "../../../src/styles/GlobalStyles";
 
 const accentColors = ["#3b82f6", "#8b5cf6", "#ef4444", "#10b981", "#f59e0b"];
 
 const More = () => {
   // Access theme functions and values
   const { theme, toggleTheme, setAccentColor } = useTheme();
+  const globalStyles = getGlobalStyles(theme);
 
   // Access project state and actions
   const { projects, addProject, deleteProject } = useProjectStore();
@@ -38,7 +40,7 @@ const More = () => {
       style={[styles.container, { backgroundColor: theme.backgroundColor }]}
     >
       {/* Appearance section: theme toggle and accent color */}
-      <Heading text="Appearance" color={theme.textColor} />
+      <Heading text="Appearance" color={globalStyles.text.color} />
       <Spacer />
 
       {/* Toggle between light/dark mode */}
@@ -46,7 +48,7 @@ const More = () => {
       <Spacer height={16} />
 
       {/* Accent color selection */}
-      <Heading text="Accent Color" color={theme.textColor} />
+      <Heading text="Accent Color" color={globalStyles.text.color} />
       <Spacer height={16} />
 
       {/* Color options as touchable dots */}
@@ -88,7 +90,13 @@ const More = () => {
             { color: theme.textColor, borderColor: theme.textColor },
           ]}
         />
-        <TouchableOpacity onPress={handleAddProject} style={styles.addButton}>
+        <TouchableOpacity
+          onPress={handleAddProject}
+          style={[
+            styles.addButton,
+            { backgroundColor: globalStyles.accent.color },
+          ]}
+        >
           <Ionicons name="add" size={20} color="#fff" />
         </TouchableOpacity>
       </View>
@@ -163,7 +171,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   addButton: {
-    backgroundColor: "#8b5cf6",
     padding: 10,
     borderRadius: 8,
   },
