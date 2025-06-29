@@ -48,11 +48,14 @@ https://drive.google.com/drive/folders/1cYOLnSF-J_dJOjj29n8az-Qo18uQE1XY?usp=sha
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/gtd-productivity-app.git
-cd gtd-productivity-app
+git clone https://github.com/maneeshtej/flow-task.git
+cd flow-task
 
-# Install dependencies
+# Install project dependencies
 npm install
+
+# Install Expo CLI globally (if not already installed)
+npm install -g expo-cli
 
 # Start the Expo app
 npx expo start
