@@ -54,9 +54,6 @@ cd flow-task
 # Install project dependencies
 npm install
 
-# Install Expo CLI globally (if not already installed)
-npm install -g expo-cli
-
 # Start the Expo app
 npx expo start
 ```
